@@ -16,6 +16,7 @@ end
 
 post '/memos' do
   title = params[:title]
+  title = 'NoTitle' if title.nil? || title.strip.empty?
   content = params[:content]
   memos = File.open('public/memos.json') { |file| JSON.parse(file.read) }
   id = (memos.keys.map(&:to_i).max || 0) + 1
