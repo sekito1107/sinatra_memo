@@ -1,0 +1,15 @@
+<div>
+  <p><%= html_escape(@title) %></p>
+  <p><%= html_escape(@content) %></p>
+</div>
+<div>
+  <form action="/memos/<%= params[:id] %>/edit" method="get">
+    <button class="button" type="submit">編集</button>
+  </form>
+</div>
+<div>
+  <form action="/memos/<%= params[:id] %>" method="post">
+    <input type="hidden" name="_method" value="delete">
+    <button class="button" type="submit">削除</button>
+  </form>
+<div>
