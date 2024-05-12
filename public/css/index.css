@@ -1,0 +1,11 @@
+.memo-list {
+  font-size: 24px;
+}
+
+.create-button {
+  font-size: 1.25em;
+  padding: 10px 20px;
+  width: 150px;
+  height: 60px;
+  border-radius: 10px;
+}
