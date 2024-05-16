@@ -32,7 +32,6 @@ post '/memos' do
 end
 
 get '/memos/:id' do
-  @memos = File.open('json/memos.json') { |file| JSON.parse(file.read) }
   @title = @memos[params[:id]]['title']
   @content = @memos[params[:id]]['content']
 
@@ -40,7 +39,6 @@ get '/memos/:id' do
 end
 
 get '/memos/:id/edit' do
-  @memos = File.open('json/memos.json') { |file| JSON.parse(file.read) }
   @title = @memos[params[:id]]['title']
   @content = @memos[params[:id]]['content']
 
