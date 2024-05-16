@@ -32,15 +32,17 @@ post '/memos' do
 end
 
 get '/memos/:id' do
-  @title = @memos[params[:id]]['title']
-  @content = @memos[params[:id]]['content']
+  memos = File.open('json/memos.json') { |file| JSON.parse(file.read) }
+  @title = memos[params[:id]]['title']
+  @content = memos[params[:id]]['content']
 
   erb :show_memo
 end
 
 get '/memos/:id/edit' do
-  @title = @memos[params[:id]]['title']
-  @content = @memos[params[:id]]['content']
+  memos = File.open('json/memos.json') { |file| JSON.parse(file.read) }
+  @title = memos[params[:id]]['title']
+  @content = memos[params[:id]]['content']
 
   erb :edit
 end
