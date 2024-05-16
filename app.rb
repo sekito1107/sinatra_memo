@@ -11,7 +11,7 @@ helpers do
 end
 
 get '/' do
-  @memos = File.open('public/memos.json') { |file| JSON.parse(file.read) }
+  @memos = File.open('json/memos.json') { |file| JSON.parse(file.read) }
   erb :index
 end
 
@@ -23,16 +23,16 @@ post '/memos' do
   title = params[:title]
   title = 'NoTitle' if title.nil? || title.strip.empty?
   content = params[:content]
-  memos = File.open('public/memos.json') { |file| JSON.parse(file.read) }
+  memos = File.open('json/memos.json') { |file| JSON.parse(file.read) }
   id = (memos.keys.map(&:to_i).max || 0) + 1
   memos[id] = { 'title' => title, 'content' => content }
-  File.open('public/memos.json', 'w') { |file| JSON.dump(memos, file) }
+  File.open('json/memos.json', 'w') { |file| JSON.dump(memos, file) }
 
   redirect '/'
 end
 
 get '/memos/:id' do
-  @memos = File.open('public/memos.json') { |file| JSON.parse(file.read) }
+  @memos = File.open('json/memos.json') { |file| JSON.parse(file.read) }
   @title = @memos[params[:id]]['title']
   @content = @memos[params[:id]]['content']
 
@@ -40,7 +40,7 @@ get '/memos/:id' do
 end
 
 get '/memos/:id/edit' do
-  @memos = File.open('public/memos.json') { |file| JSON.parse(file.read) }
+  @memos = File.open('json/memos.json') { |file| JSON.parse(file.read) }
   @title = @memos[params[:id]]['title']
   @content = @memos[params[:id]]['content']
 
@@ -50,17 +50,17 @@ end
 patch '/memos/:id' do
   title = params[:title]
   content = params[:content]
-  memos = File.open('public/memos.json') { |file| JSON.parse(file.read) }
+  memos = File.open('json/memos.json') { |file| JSON.parse(file.read) }
   memos[params[:id]] = { 'title' => title, 'content' => content }
-  File.open('public/memos.json', 'w') { |file| JSON.dump(memos, file) }
+  File.open('json/memos.json', 'w') { |file| JSON.dump(memos, file) }
 
   redirect "/memos/#{params[:id]}"
 end
 
 delete '/memos/:id' do
-  memos = File.open('public/memos.json') { |file| JSON.parse(file.read) }
+  memos = File.open('json/memos.json') { |file| JSON.parse(file.read) }
   memos.delete(params[:id])
-  File.open('public/memos.json', 'w') { |file| JSON.dump(memos, file) }
+  File.open('json/memos.json', 'w') { |file| JSON.dump(memos, file) }
 
   redirect '/'
 end
