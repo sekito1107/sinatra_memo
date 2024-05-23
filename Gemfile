@@ -7,6 +7,7 @@ gem 'sinatra'
 gem 'sinatra-contrib'
 gem 'webrick'
 gem 'rackup'
+gem 'pg'
 
 group :development do
   gem 'rubocop-fjord', require: false
