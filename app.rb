@@ -12,7 +12,7 @@ helpers do
 end
 
 def connect
-  @database ||= PG.connect(dbname: 'memo')
+  @connect ||= PG.connect(dbname: 'memo')
 end
 
 configure do
