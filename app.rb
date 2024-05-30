@@ -25,8 +25,7 @@ def read_memos
 end
 
 def read_memo(id)
-  memos = connect.exec('SELECT * FROM memos WHERE id = $1;', [id])
-  memos.values[0]
+  connect.exec_params('SELECT id, title, content FROM memos WHERE id = $1', [id]).first.transform_keys(&:to_sym)
 end
 
 def create_memo(title, content)
@@ -60,15 +59,15 @@ end
 
 get '/memos/:id' do
   memo = read_memo(params[:id])
-  @title = memo[1]
-  @content = memo[2]
+  @title = memo[:title]
+  @content = memo[:content]
   erb :show_memo
 end
 
 get '/memos/:id/edit' do
   memo = read_memo(params[:id])
-  @title = memo[1]
-  @content = memo[2]
+  @title = memo[:title]
+  @content = memo[:content]
 
   erb :edit
 end
