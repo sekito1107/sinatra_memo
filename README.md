@@ -12,4 +12,4 @@
 
 # アクセス
 
- http://localhost:4567/memos にアクセスする。
+ http://localhost:4567 にアクセスする。
