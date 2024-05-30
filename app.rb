@@ -5,6 +5,7 @@ require 'sinatra'
 require 'sinatra/reloader'
 require 'json'
 require 'pg'
+require 'dotenv/load'
 
 helpers do
   include Rack::Utils
@@ -12,7 +13,13 @@ helpers do
 end
 
 def connect
-  @connect ||= PG.connect(dbname: 'memo')
+  @connect ||= PG.connect(
+    dbname: ENV['DB_NAME'],
+    user: ENV['DB_USER'],
+    password: ENV['DB_PASSWORD'],
+    host: ENV['DB_HOST'],
+    port: ENV['DB_PORT']
+  )
 end
 
 configure do

@@ -2,9 +2,12 @@
 
 `$ bundle install`
 
-# データ保存用のPostgreSQLの起動
+# データベースの作成
+Postgresでアプリケーションに利用するデータベースを作成する
 
-`$ sudo service postgresql start`
+# 設定
+
+`.env`内の設定ファイルに接続情報を記述する
 
 # 起動
 

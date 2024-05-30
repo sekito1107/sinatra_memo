@@ -2,6 +2,7 @@
 
 source 'https://rubygems.org'
 
+gem 'dotenv'
 gem 'erb_lint', require: false
 gem 'pg'
 gem 'rackup'
