@@ -4,14 +4,51 @@ require 'erb'
 require 'sinatra'
 require 'sinatra/reloader'
 require 'json'
+require 'pg'
+require 'dotenv/load'
 
 helpers do
   include Rack::Utils
   alias_method :h, :escape_html
 end
 
+def connect
+  @connect ||= PG.connect(
+    dbname: ENV['DB_NAME'],
+    user: ENV['DB_USER'],
+    password: ENV['DB_PASSWORD'],
+    host: ENV['DB_HOST'],
+    port: ENV['DB_PORT']
+  )
+end
+
+configure do
+  result = connect.exec("SELECT * FROM information_schema.tables WHERE table_name = 'memos'")
+  connect.exec('CREATE TABLE memos (id serial, title varchar(255), content text)') if result.values.empty?
+end
+
+def read_memos
+  connect.exec('SELECT * FROM memos')
+end
+
+def read_memo(id)
+  connect.exec_params('SELECT id, title, content FROM memos WHERE id = $1', [id]).first.transform_keys(&:to_sym)
+end
+
+def create_memo(title, content)
+  connect.exec('INSERT INTO memos(title, content) VALUES ($1, $2);', [title, content])
+end
+
+def edit_memo(title, content, id)
+  connect.exec('UPDATE memos SET title = $1, content = $2 WHERE id = $3;', [title, content, id])
+end
+
+def delete_memo(id)
+  connect.exec('DELETE FROM memos WHERE id = $1;', [id])
+end
+
 get '/' do
-  @memos = File.open('json/memos.json') { |file| JSON.parse(file.read) }
+  @memos = read_memos
   erb :index
 end
 
@@ -21,28 +58,23 @@ end
 
 post '/memos' do
   title = params[:title]
-  title = 'NoTitle' if title.nil? || title.strip.empty?
   content = params[:content]
-  memos = File.open('json/memos.json') { |file| JSON.parse(file.read) }
-  id = (memos.keys.map(&:to_i).max || 0) + 1
-  memos[id] = { 'title' => title, 'content' => content }
-  File.open('json/memos.json', 'w') { |file| JSON.dump(memos, file) }
+  create_memo(title, content)
 
   redirect '/'
 end
 
 get '/memos/:id' do
-  memos = File.open('json/memos.json') { |file| JSON.parse(file.read) }
-  @title = memos[params[:id]]['title']
-  @content = memos[params[:id]]['content']
-
+  memo = read_memo(params[:id])
+  @title = memo[:title]
+  @content = memo[:content]
   erb :show_memo
 end
 
 get '/memos/:id/edit' do
-  memos = File.open('json/memos.json') { |file| JSON.parse(file.read) }
-  @title = memos[params[:id]]['title']
-  @content = memos[params[:id]]['content']
+  memo = read_memo(params[:id])
+  @title = memo[:title]
+  @content = memo[:content]
 
   erb :edit
 end
@@ -50,17 +82,13 @@ end
 patch '/memos/:id' do
   title = params[:title]
   content = params[:content]
-  memos = File.open('json/memos.json') { |file| JSON.parse(file.read) }
-  memos[params[:id]] = { 'title' => title, 'content' => content }
-  File.open('json/memos.json', 'w') { |file| JSON.dump(memos, file) }
+  edit_memo(title, content, params[:id])
 
   redirect "/memos/#{params[:id]}"
 end
 
 delete '/memos/:id' do
-  memos = File.open('json/memos.json') { |file| JSON.parse(file.read) }
-  memos.delete(params[:id])
-  File.open('json/memos.json', 'w') { |file| JSON.dump(memos, file) }
+  delete_memo(params[:id])
 
   redirect '/'
 end
